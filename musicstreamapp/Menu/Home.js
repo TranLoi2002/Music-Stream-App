@@ -23,10 +23,12 @@ function Home({ navigation }) {
           color="#808080"
           style={{width: 50, height: 40,paddingTop:5}}
         />
-        <Image
-          source={require('../assets/HomeImage/Avatar3.png')}
-          style={{ width: 40, height: 40 }}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate('FirstPage')}>
+          <Image
+            source={require('../assets/HomeImage/Avatar3.png')}
+            style={{ width: 40, height: 40 }}
+          />
+        </TouchableOpacity>
       </View>
       <View style={{ paddingTop: 70 }}>
         <Image
