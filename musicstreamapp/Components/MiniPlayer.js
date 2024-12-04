@@ -4,11 +4,11 @@ import { View, Text, Image, TouchableOpacity, ImageBackground,StyleSheet } from 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const MiniPlayer = ({ currentTrack, isPlaying, togglePlayback, onOpenModal }) => {
-  const miniPlayerImage = currentTrack?.image || 'default_mini_player_image_url';
-
+  const miniPlayerImage = currentTrack?.image 
+  ||'https://azdigi.com/blog/wp-content/uploads/2022/12/404-error.png';
   return (
     <TouchableOpacity onPress={onOpenModal}>
-      <ImageBackground source={{ uri: miniPlayerImage }} style={styles.miniPlayer}>
+      <ImageBackground source={{ uri: miniPlayerImage  }} style={styles.miniPlayer}>
         <View style={styles.miniPlayerDetails}>
           <Image source={{ uri: miniPlayerImage }} style={styles.miniPlayerImage} />
           <Text style={styles.miniPlayerText} numberOfLines={1} ellipsizeMode="tail">

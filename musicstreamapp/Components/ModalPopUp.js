@@ -54,7 +54,7 @@ const ModalPopUp = ({
       }
     }
   };
-
+const defaultImage = 'https://azdigi.com/blog/wp-content/uploads/2022/12/404-error.png';
   return (
     <Modal
       animationType="slide"
@@ -66,7 +66,7 @@ const ModalPopUp = ({
       }}
     >
       <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'column' }}>
-        <ImageBackground source={{ uri: image }} style={styles.container} imageStyle={{ opacity: 0.8 }}>
+        <ImageBackground source={{ uri: image || defaultImage }} style={styles.container} imageStyle={{ opacity: 0.8 }}>
           <View style={{ width: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', padding: 20 }}>
             <TouchableOpacity onPress={isMinimized ? handleMaximize : handleMinimize}>
               <Ionicons name={isMinimized ? 'ellipsis-horizontal' : 'chevron-down'} size={30} color="#fff" />

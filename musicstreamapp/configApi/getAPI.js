@@ -1,9 +1,6 @@
-
-
-
 import axios from 'axios';
 
-const apiKey = 'b95828f2'; 
+const apiKey = 'b95828f2';
 
 // Hàm tìm kiếm bài hát theo từ khóa
 export const searchTracks = async (query) => {
@@ -40,7 +37,6 @@ export const getTracks = async () => {
       }
     });
     
-    console.log(response.data.results.slice(0,1));
     return response.data.results;
   } catch (error) {
     console.error('Error getting tracks:', error);
@@ -57,7 +53,6 @@ export const getAlbums = async () => {
         limit: 10
       }
     });
-    console.log(response.data.results.slice(0,1));
     return response.data.results;
   } catch (error) {
     console.error('Error getting albums:', error);
@@ -67,17 +62,33 @@ export const getAlbums = async () => {
 // Hàm lấy các bài hát trong album từ Jamendo
 export const getTracksInAlbum = async (albumId) => {
   try {
-    const response = await axios.get(`https://api.jamendo.com/v3.0/albums/tracks`, {
+    const response = await axios.get('https://api.jamendo.com/v3.0/albums/tracks', {
       params: {
         client_id: apiKey,
-        album_id: albumId,
+        id: albumId,
         format: 'json'
       }
     });
-    console.log(response.data.results);
-    return response.data.results;
+    return response.data.results[0].tracks;
   } catch (error) {
     console.error('Error getting tracks in album:', error);
   }
 };
 
+// Hàm lấy danh sách feed từ Jamendo
+export const getFeeds = async () => {
+  try {
+    const response = await axios.get('https://api.jamendo.com/v3.0/feeds/', {
+      params: {
+        client_id: apiKey,
+        format: 'json',
+        limit: 10,
+        order: 'id_desc'
+      }
+    });
+    console.log(response.data.results);
+    return response.data.results;
+  } catch (error) {
+    console.error('Error getting feed:', error);
+  }
+};

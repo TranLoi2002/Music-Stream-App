@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,28 @@ import {
   SafeAreaView,
   FlatList,
   Image,
-  ScrollView
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 const Library = ({ navigation, loveTracks, playlists }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Giả lập việc tải dữ liệu
+    const fetchData = async () => {
+      setLoading(true);
+      // Giả lập thời gian tải dữ liệu
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    };
+    fetchData();
+  }, []);
+
   const Header = () => {
     return (
       <View style={styles.headerContainer}>
@@ -28,48 +43,55 @@ const Library = ({ navigation, loveTracks, playlists }) => {
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <Header />
-      <ScrollView style={styles.container}>
-        <TouchableOpacity
-          style={styles.playlistContainer}
-          onPress={() =>
-            navigation.navigate('LoveTracks', { tracks: loveTracks })
-          }>
-          <View style={styles.iconContainer}>
-            <Icon name="heart" size={30} color="#1a2044" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>Bài hát yêu thích</Text>
-            <Text style={styles.subtitle}>
-              Danh sách phát • {loveTracks.length} bài hát
-            </Text>
-          </View>
-        </TouchableOpacity>
+      {loading ? ( 
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text>Loading...</Text>
+        </View>
+      ) : (
+        <ScrollView style={styles.container}>
+          <TouchableOpacity
+            style={styles.playlistContainer}
+            onPress={() =>
+              navigation.navigate('LoveTracks', { tracks: loveTracks })
+            }>
+            <View style={styles.iconContainer}>
+              <Icon name="heart" size={30} color="#1a2044" />
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>Bài hát yêu thích</Text>
+              <Text style={styles.subtitle}>
+                Danh sách phát • {loveTracks.length} bài hát
+              </Text>
+            </View>
+          </TouchableOpacity>
 
-        <FlatList
-          data={playlists}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.albumContainer}
-              onPress={() => navigation.navigate('TrackInAlbum', { albumId: item.id, albumName: item.name })}
-            >
-              <LinearGradient
-                colors={['#3147be', '#1a2044']}
-                style={styles.albumImageContainer}
+          <FlatList
+            data={playlists}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.albumContainer}
+                onPress={() => navigation.navigate('TrackInAlbum', { albumId: item.id, albumName: item.name })}
               >
-                <Image
-                  source={{ uri: item.image }}
-                  style={styles.albumImage}
-                />
-              </LinearGradient>
-              <View style={styles.albumTextContainer}>
-                <Text style={styles.albumName}>{item.name}</Text>
-                <Text style={{ fontSize: 12, color: 'white' }}>{item.artist_name}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-      </ScrollView>
+                <LinearGradient
+                  colors={['#3147be', '#1a2044']}
+                  style={styles.albumImageContainer}
+                >
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.albumImage}
+                  />
+                </LinearGradient>
+                <View style={styles.albumTextContainer}>
+                  <Text style={styles.albumName}>{item.name}</Text>
+                  <Text style={{ fontSize: 12, color: 'white' }}>{item.artist_name}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
@@ -145,6 +167,11 @@ const styles = StyleSheet.create({
   albumSubtitle: {
     color: 'grey',
     fontSize: 14,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

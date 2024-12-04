@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, View, StyleSheet, Easing } from 'react-native';
 
-const RotatingDisc = ({ uri }) => {
+const RotatingDisc = ({ uri }) =>  {
   const rotateValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -15,8 +15,6 @@ const RotatingDisc = ({ uri }) => {
     );
 
     rotate.start();
-
-    // Return a cleanup function to stop the animation when the component unmounts
     return () => rotate.stop();
   }, []);
 
@@ -24,11 +22,13 @@ const RotatingDisc = ({ uri }) => {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
+  const defaultImage =
+    'https://picsum.photos/200';
 
   return (
     <Animated.View style={{ transform: [{ rotate }] }}>
       <View style={styles.discContainer}>
-        <Image source={{ uri }} style={styles.disc} />
+        <Image source={{ uri } || {defaultImage}} style={styles.disc} />
         <View style={styles.centerCircle} />
       </View>
     </Animated.View>

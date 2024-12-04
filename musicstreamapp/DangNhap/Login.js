@@ -1,35 +1,45 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
-import {apiLogin,linkImgBg} from '../api';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { apiUsers } from '../api';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    try { 
-      const response = await fetch(apiLogin); 
-      const users = await response.json(); 
-      console.log(users);
-      const user = users.find(u => u.email === email && u.password === password); 
-      if (user) { // Xử lý khi đăng nhập thành công 
-        alert('Login Successful', 'You have successfully logged in!');  
+    if (!email || !password) {
+      alert('Please enter both email and password.');
+      return;
+    }
+
+    try {
+      const response = await fetch(apiUsers);
+      const users = await response.json();
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        // Lưu thông tin người dùng vào AsyncStorage
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        // Xử lý khi đăng nhập thành công
         navigation.navigate('Tabs');
-        } 
-      else { // Xử lý lỗi đăng nhập 
-          alert('Login Failed', 'Invalid email or password. Please try again.'); 
-        } 
-        } 
-    catch (error) { // Xử lý lỗi khi gọi API 
-      alert('Error', 'An error occurred. Please try again.'); console.error(error); }
+      } else {
+        // Xử lý lỗi đăng nhập
+        alert('Invalid email or password', 'Please try again.');
+      }
+    } catch (error) {
+      // Xử lý lỗi khi gọi API
+      alert('Please try again.');
+      console.error(error);
+    }
   };
 
   return (
     <View style={styles.container}>
       <ImageBackground 
-        source={require('../assets/HinhNen/hinhnen.jpg')}// Cập nhật với URL chính xác
+        source={require('../assets/HinhNen/hinhnen.jpg')}
         style={styles.backgroundImage}
-        imageStyle={{ opacity: 0.8 }} // Đặt độ mờ cho ảnh nền
+        imageStyle={{ opacity: 0.8 }}
       >
         <View style={styles.overlay}>
           <Text style={styles.title}>Login</Text>
@@ -80,8 +90,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     width: '100%',
-    height:'100%',
-    justifyContent:'center'
+    height: '100%',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 32,

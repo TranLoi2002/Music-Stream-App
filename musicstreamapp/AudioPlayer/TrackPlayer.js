@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -9,7 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Modal,
-  ImageBackground,
+  ActivityIndicator, // Thêm ActivityIndicator
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ModalPopUp from '../Components/ModalPopUp';
@@ -22,7 +21,8 @@ const TrackPlayer = ({ route, getTracks, headerTitle }) => {
   const [tracks, setTracks] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [miniPlayerVisible, setMiniPlayerVisible] = useState(false);
-
+  const [loading, setLoading] = useState(true); // Thêm state cho loading
+  const defaultImage = 'https://azdigi.com/blog/wp-content/uploads/2022/12/404-error.png';
   const {
     sound,
     isPlaying,
@@ -38,12 +38,12 @@ const TrackPlayer = ({ route, getTracks, headerTitle }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Bắt đầu hiệu ứng loading
       const fetchedData = await getTracks(albumId);
       setTracks(
-        fetchedData.filter(
-          (track) => track.audio || track.track?.audio
-        )
+        fetchedData.filter((track) => track.audio || track.track?.audio)
       );
+      setLoading(false); // Kết thúc hiệu ứng loading
     };
     fetchData();
   }, [albumId]);
@@ -51,9 +51,11 @@ const TrackPlayer = ({ route, getTracks, headerTitle }) => {
   const renderItem = ({ item, index }) => {
     const track = item.track || item;
     const imageUrl =
-      track.album_image || item.album_image || 'default_track_image_url';
+      track.album_image || item.album_image || defaultImage;
     const artists = track.artist_name || item.artist_name || 'Unknown Artist';
-const duration = track.duration ? formatDuration(track.duration * 1000) : formatDuration(item.duration * 1000);
+    const duration = track.duration
+      ? formatDuration(track.duration * 1000)
+      : formatDuration(item.duration * 1000);
     return (
       <TouchableOpacity
         onPress={() => {
@@ -96,11 +98,15 @@ const duration = track.duration ? formatDuration(track.duration * 1000) : format
           <Ionicons name="shuffle" size={24} color="#fff" />
         </TouchableOpacity>
       </LinearGradient>
-      <FlatList
-        data={tracks}
-        keyExtractor={(item) => (item.track ? item.track.id : item.id)}
-        renderItem={renderItem}
-      />
+      {loading ? ( // Hiển thị ActivityIndicator khi loading
+        <ActivityIndicator size="large" color="#fff" />
+      ) : (
+        <FlatList
+          data={tracks}
+          keyExtractor={(item) => (item.track ? item.track.id : item.id)}
+          renderItem={renderItem}
+        />
+      )}
       <Modal
         animationType="slide"
         transparent={true}
